@@ -13,6 +13,7 @@ class AppConfig {
     @Bean
     @Throws(AWTException::class)
     fun robot(): Robot {
+        System.setProperty("java.awt.headless", "false")
         return Robot()
     }
 }
