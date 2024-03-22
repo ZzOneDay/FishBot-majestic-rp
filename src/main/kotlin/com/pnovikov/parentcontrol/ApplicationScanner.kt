@@ -15,9 +15,9 @@ class ApplicationScanner(
     fun scanning() {
 
         for (i in 1..1000) {
-            Thread.sleep(2000)
+            Thread.sleep(1000)
             val image: BufferedImage = screenInput.getScreen()
-            val file = File("${LocalDateTime.now()}.png")
+            val file = File("C:\\Users\\azmin\\IdeaProjects\\ParentControl\\helloKISA$i.png")
             saveImage(image, file, "PNG")
         }
 
