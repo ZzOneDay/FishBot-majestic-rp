@@ -18,10 +18,10 @@ class FindFishService(
     fun findFish(image: BufferedImage): java.awt.Point? {
 
         // Place for searching
-        val minX = 100
+        val minX = 0
         val minY = 100
-        val width = 400
-        val height = 1400
+        val width = 1500
+        val height = 400
 
         // Image to Mat
         val cropImage = cropImage(image, minX, minY, width, height)
@@ -29,10 +29,19 @@ class FindFishService(
 
         // Detecting hook on Mat image
         val hookDetections = MatOfRect()
-        fishHookDetection.detectMultiScale(sourceImage, hookDetections, 1.1, 1, 1, Size(24.0, 24.0))
+        fishHookDetection.detectMultiScale(sourceImage, hookDetections, 1.2, 3)
 
 
-        return hookDetections.toList().map { java.awt.Point(it.x, it.y) }.firstOrNull()
+        val fish = hookDetections.toList().map { java.awt.Point(it.x, it.y) }.firstOrNull()
+
+        return if (fish == null) {
+            //println()
+            //showResult(sourceImage, hookDetections.toList())
+            null
+        } else {
+            fish
+        }
+
     }
 
     fun cropImage(image: BufferedImage, minX: Int, minY: Int, width: Int, height: Int): BufferedImage {
