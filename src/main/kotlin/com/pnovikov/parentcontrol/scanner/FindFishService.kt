@@ -1,8 +1,11 @@
 package com.pnovikov.parentcontrol.scanner
 
+import nu.pattern.OpenCV
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
 import org.opencv.imgproc.Imgproc
+import org.opencv.objdetect.CascadeClassifier
+import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
 import java.awt.Color
 import java.awt.image.BufferedImage
@@ -14,7 +17,9 @@ import java.io.ByteArrayOutputStream
 import javax.imageio.ImageIO
 
 @Service
-class FindFishService {
+class FindFishService(
+        var resourceLoader: ResourceLoader
+) {
 
     fun findFish(image: BufferedImage): java.awt.Point {
         val minY = 100;
@@ -22,61 +27,40 @@ class FindFishService {
         val maxY = image.height - 300
         val maxX = image.width - 400
 
-//        for (xStep in minX .. maxX step 5) {
-//            for(yStep in minY .. maxY step 5) {
-//                //image.setRGB(xStep,yStep, 0xFF0000)
-//                //val currentStep = image.getRGB(xStep, yStep)
-//                val rgb = image.getRGB(xStep, yStep)
-//                val color = Color(rgb)
-////                if (color.blue > 200 && color.red > 200 && color.green > 200 ) {
-////                    image.setRGB(xStep,yStep, 0xFF0000)
-////                }
-//            }
-//        }
+        OpenCV.loadLocally()
+        val hookDetector = CascadeClassifier()
 
-        val point = openCV(image)
+        val templateImagePath = resourceLoader.getResource("template/cascade.xml")?.file?.path
+                ?: throw IllegalArgumentException()
 
-        makeTarget(image, point.x, point.y)
+        val sourceImage = bufferedImageToMat(image)
+
+        // Detecting hook
+        val hookDetections = MatOfRect()
+        hookDetector.load(templateImagePath);
+
+        hookDetector.detectMultiScale(sourceImage, hookDetections, 1.1,1,1, org.opencv.core.Size(24.0, 24.0))
+
+        val hooks: List<Rect> = hookDetections.toList()
+
+        for (rect in hooks) {
+            Imgproc.rectangle(
+                    sourceImage,
+                    org.opencv.core.Point(rect.tl().x, rect.tl().y), // top-left corner
+                    org.opencv.core.Point(rect.br().x, rect.br().y), // bottom-right corner
+                    Scalar(0.0, 255.0, 0.0), // color (green)
+                    2 // thickness of the rectangle
+            )
+        }
+
+        // Конвертация Mat в BufferedImage
+        val imageBytes = MatOfByte()
+        Imgcodecs.imencode(".jpg", sourceImage, imageBytes)
+        val byteArray = imageBytes.toArray()
+        val inputStream = ByteArrayInputStream(byteArray)
+        val bufferedImage = ImageIO.read(inputStream)
 
         return java.awt.Point()
-    }
-
-    fun openCV(image: BufferedImage): java.awt.Point {
-        // Загрузка изображения и шаблона
-        val sourceImage = bufferedImageToMat(image)//Imgcodecs.imread("source_image.jpg")
-        val templateImagePath = object {}.javaClass.getResource("template/template.png")?.path ?:
-        throw IllegalArgumentException("Could not find resource: template")
-        val templateImage = Imgcodecs.imread(templateImagePath)
-
-        // Создание матрицы для хранения результата сравнения
-        val result = Mat()
-
-        // Сравнение шаблона с изображением
-        Imgproc.matchTemplate(sourceImage, templateImage, result, Imgproc.TM_CCOEFF_NORMED)
-
-        // Поиск лучшего совпадения
-        val minMaxLocResult: Core.MinMaxLocResult = Core.minMaxLoc(result)
-
-        // Получение координат наилучшего совпадения
-        val matchLoc = minMaxLocResult.maxLoc
-
-//        // Отрисовка прямоугольника вокруг совпадения
-//        Imgproc.rectangle(
-//            sourceImage,
-//            matchLoc,
-//            Point(matchLoc.x + templateImage.cols(), matchLoc.y + templateImage.rows()),
-//            Scalar(0.0, 255.0, 0.0),
-//            2
-//        )
-//
-//
-//
-//        // Сохранение результата
-//        Imgcodecs.imwrite("result_image.jpg", sourceImage)
-        return java.awt.Point(
-            (matchLoc.x + templateImage.cols()).toInt(),
-            (matchLoc.y + templateImage.rows()).toInt()
-        )
     }
 
     fun bufferedImageToMat(bufferedImage: BufferedImage): Mat {
@@ -86,20 +70,4 @@ class FindFishService {
         val inputStream = ByteArrayInputStream(byteArray)
         return Imgcodecs.imdecode(MatOfByte(*inputStream.readAllBytes()), Imgcodecs.IMREAD_COLOR)
     }
-
-    fun makeTarget(image: BufferedImage, x: Int, y: Int) {
-        val xFrom = x - 10
-        val xTo = x + 10
-
-        val yFrom = y - 10;
-        val yTo = y + 10;
-
-        for (xStep in xFrom .. xTo) {
-            for(yStep in yFrom .. yTo) {
-                image.setRGB(xStep,yStep, 0xFF0000)
-            }
-        }
-    }
-
-
 }
