@@ -29,6 +29,8 @@ class RunApplication(
         var way: Ways? = null
         var lastPoint: Point? = null
 
+        var isFishing = false
+
         while (running) {
             Thread.sleep(2000)
             val bufferedImage = screenInput.getScreen()
@@ -38,7 +40,8 @@ class RunApplication(
                 // Ждемся
             }
 
-            if (currentStatus == GameStatus.FINISHING) {
+            if (currentStatus == GameStatus.FINISHING || isFishing) {
+                isFishing = true
                 val point = findFishService.findFish(bufferedImage)
 
                 if (lastPoint == null) {
@@ -55,6 +58,7 @@ class RunApplication(
             }
 
             if (currentStatus == GameStatus.CATCH) {
+                isFishing = false
                 lastPoint = null
                 way = null
                 pushButtonService.click()
