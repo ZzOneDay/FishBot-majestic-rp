@@ -40,6 +40,13 @@ class RunApplication(
                 // Ждемся
             }
 
+            if (currentStatus == GameStatus.CATCH) {
+                isFishing = false
+                lastPoint = null
+                way = null
+                pushButtonService.click()
+            }
+
             if (currentStatus == GameStatus.FINISHING || isFishing) {
                 isFishing = true
                 val point = findFishService.findFish(bufferedImage)
@@ -50,18 +57,12 @@ class RunApplication(
                 } else {
                     if (point != null) {
                         way = fishWayService.getWay(lastPoint, point)
-                        Thread.sleep(1000)
                         pushButtonService.push(way)
                         lastPoint = point
+                    } else if (way != null) {
+                        pushButtonService.push(way)
                     }
                 }
-            }
-
-            if (currentStatus == GameStatus.CATCH) {
-                isFishing = false
-                lastPoint = null
-                way = null
-                pushButtonService.click()
             }
         }
     }

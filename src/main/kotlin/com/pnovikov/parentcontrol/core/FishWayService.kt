@@ -18,12 +18,12 @@ class FishWayService(
             playSound(
                 resourceLoader.getResource("sound/left_sound.wav").file.path
             )
-            Ways.LEFT
+            Ways.RIGHT
         } else {
             playSound(
                 resourceLoader.getResource("sound/right_sound.wav").file.path
             )
-            Ways.RIGHT
+            Ways.LEFT
         }
     }
 

@@ -14,19 +14,19 @@ class PushButtonService(
 ) {
 
     fun push(way: Ways) {
-        if (way == Ways.LEFT) {
+        if (way == Ways.RIGHT) {
             println("Нажимаю кнопку 'A'")
             playSound("push_left.wav")
-            Thread.sleep(4000)
-            playSound("unpush_left.wav")
+            Thread.sleep(2000)
+            //playSound("unpush_left.wav")
             println("Отпуска кнопку 'A'")
         }
 
-        if (way == Ways.RIGHT) {
+        if (way == Ways.LEFT) {
             println("Нажимаю кнопку 'D'")
             playSound("push_right.wav")
-            Thread.sleep(4000)
-            playSound("unpush_right.wav")
+            Thread.sleep(2000)
+            //playSound("unpush_right.wav")
             println("Отпуска кнопку 'D'")
         }
     }
