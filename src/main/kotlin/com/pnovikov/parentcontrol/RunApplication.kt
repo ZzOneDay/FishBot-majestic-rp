@@ -30,21 +30,35 @@ class RunApplication(
 
         var isFishing = false
 
+        var attempt = 0;
+
         while (running) {
-            Thread.sleep(randomService.randomTime(1500))
+            Thread.sleep(randomService.randomTime(100))
             val bufferedImage = screenInput.getScreen()
             currentStatus = findProcessStatus.getCurrentStatus(bufferedImage)
+
+            // fish broken
+            if (attempt > 30) {
+                println("Много слишком попыток ловли 1 рыбы")
+                isFishing = false
+                lastPoint = null
+                way = null
+                attempt = 0
+                continue
+            }
 
             if (currentStatus == GameStatus.CATCH) {
                 isFishing = false
                 lastPoint = null
                 way = null
+                attempt = 0
                 pushButtonService.click()
             }
 
             if (currentStatus == GameStatus.FINISHING || isFishing) {
                 isFishing = true
                 val point = findFishService.findFish(bufferedImage)
+                attempt++
 
                 if (lastPoint == null) {
                     lastPoint = point

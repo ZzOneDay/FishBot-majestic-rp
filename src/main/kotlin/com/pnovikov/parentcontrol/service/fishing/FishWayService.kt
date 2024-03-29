@@ -16,12 +16,12 @@ class FishWayService(
     fun getWay(start: Point, finish: Point): FishWay {
         return if (start.x < finish.x) {
             playSound(
-                resourceLoader.getResource("sound/left_sound.wav").file.path
+                    resourceLoader.getResource("sound/right_sound.wav").file.path
             )
             FishWay.RIGHT
         } else {
             playSound(
-                resourceLoader.getResource("sound/right_sound.wav").file.path
+                    resourceLoader.getResource("sound/left_sound.wav").file.path
             )
             FishWay.LEFT
         }
