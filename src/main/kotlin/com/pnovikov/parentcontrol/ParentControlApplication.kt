@@ -1,9 +1,7 @@
 package com.pnovikov.parentcontrol
 
-import com.pnovikov.parentcontrol.input.ScreenInput
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
-import org.springframework.context.annotation.Configuration
 import java.util.Scanner
 
 @SpringBootApplication

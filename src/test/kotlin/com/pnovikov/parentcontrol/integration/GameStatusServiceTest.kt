@@ -1,26 +1,26 @@
-package com.pnovikov.parentcontrol.scanner
+package com.pnovikov.parentcontrol.integration
 
-import com.pnovikov.parentcontrol.GameStatus
+import com.pnovikov.parentcontrol.service.game.GameStatus
+import com.pnovikov.parentcontrol.service.game.GameStatusService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.core.io.ResourceLoader
-import java.io.File
 import javax.imageio.ImageIO
 
 @SpringBootTest
-class FindProcessStatusTest() {
+class GameStatusServiceTest() {
 
     @Autowired
-    private lateinit var findProcessStatus: FindProcessStatus
+    private lateinit var findProcessStatus: GameStatusService
 
     @Autowired
     private lateinit var resourceLoader: ResourceLoader
 
     @Test
     fun getFishingStatus() {
-        val waitingStatus = GameStatus.WAITING
+        val waitingStatus = GameStatus.NOTHING
         val imageFile = resourceLoader.getResource("fish/hello38.png").file
         val image = ImageIO.read(imageFile)
         val status = findProcessStatus.getCurrentStatus(image)
@@ -29,7 +29,7 @@ class FindProcessStatusTest() {
 
     @Test
     fun getCatchingStatus() {
-        val waitingStatus = GameStatus.WAITING
+        val waitingStatus = GameStatus.NOTHING
         val imageFile = resourceLoader.getResource("nofish/hello42.png").file
         val image = ImageIO.read(imageFile)
         val status = findProcessStatus.getCurrentStatus(image)

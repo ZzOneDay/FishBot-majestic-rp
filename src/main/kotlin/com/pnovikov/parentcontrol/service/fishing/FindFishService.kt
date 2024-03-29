@@ -1,4 +1,4 @@
-package com.pnovikov.parentcontrol.scanner
+package com.pnovikov.parentcontrol.service.fishing
 
 import org.opencv.core.*
 import org.opencv.imgcodecs.Imgcodecs
@@ -32,20 +32,19 @@ class FindFishService(
         fishHookDetection.detectMultiScale(sourceImage, hookDetections, 1.2, 3)
 
 
-        val fish = hookDetections.toList().map { java.awt.Point(it.x, it.y) }.firstOrNull()
-
-        return if (fish == null) {
-            //println()
-            //showResult(sourceImage, hookDetections.toList())
-            null
-        } else {
-            fish
-        }
-
+        return hookDetections.toList().map { java.awt.Point(it.x, it.y) }.firstOrNull()
     }
 
     fun cropImage(image: BufferedImage, minX: Int, minY: Int, width: Int, height: Int): BufferedImage {
         return image.getSubimage(minX, minY, width, height)
+    }
+
+    fun bufferedImageToMat(bufferedImage: BufferedImage): Mat {
+        val byteArrayOutputStream = ByteArrayOutputStream()
+        ImageIO.write(bufferedImage, "png", byteArrayOutputStream)
+        val byteArray = byteArrayOutputStream.toByteArray()
+        val inputStream = ByteArrayInputStream(byteArray)
+        return Imgcodecs.imdecode(MatOfByte(*inputStream.readAllBytes()), Imgcodecs.IMREAD_COLOR)
     }
 
     fun showResult(sourceImage: Mat, hooks: List<Rect>) {
@@ -66,13 +65,5 @@ class FindFishService(
         val inputStream = ByteArrayInputStream(byteArray)
         val bufferedImage = ImageIO.read(inputStream)
         print("Check bufferedImage in debug")
-    }
-
-    fun bufferedImageToMat(bufferedImage: BufferedImage): Mat {
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        ImageIO.write(bufferedImage, "png", byteArrayOutputStream)
-        val byteArray = byteArrayOutputStream.toByteArray()
-        val inputStream = ByteArrayInputStream(byteArray)
-        return Imgcodecs.imdecode(MatOfByte(*inputStream.readAllBytes()), Imgcodecs.IMREAD_COLOR)
     }
 }

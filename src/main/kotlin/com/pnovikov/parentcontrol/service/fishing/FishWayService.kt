@@ -1,4 +1,4 @@
-package com.pnovikov.parentcontrol.core
+package com.pnovikov.parentcontrol.service.fishing
 
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
@@ -13,17 +13,17 @@ class FishWayService(
     val resourceLoader: ResourceLoader
 ) {
 
-    fun getWay(start: Point, finish: Point): Ways {
+    fun getWay(start: Point, finish: Point): FishWay {
         return if (start.x < finish.x) {
             playSound(
                 resourceLoader.getResource("sound/left_sound.wav").file.path
             )
-            Ways.RIGHT
+            FishWay.RIGHT
         } else {
             playSound(
                 resourceLoader.getResource("sound/right_sound.wav").file.path
             )
-            Ways.LEFT
+            FishWay.LEFT
         }
     }
 
@@ -34,9 +34,4 @@ class FishWayService(
         clip.open(audioInputStream)
         clip.start()
     }
-}
-
-enum class Ways {
-    LEFT,
-    RIGHT
 }

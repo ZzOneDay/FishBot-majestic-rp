@@ -1,11 +1,10 @@
-package com.pnovikov.parentcontrol.scanner
+package com.pnovikov.parentcontrol.integration
 
-import org.junit.jupiter.api.Assertions
+import com.pnovikov.parentcontrol.service.fishing.FindFishService
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
-import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
 

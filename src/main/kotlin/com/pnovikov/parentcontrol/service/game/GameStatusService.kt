@@ -1,26 +1,24 @@
-package com.pnovikov.parentcontrol.scanner
+package com.pnovikov.parentcontrol.service.game
 
-import com.pnovikov.parentcontrol.GameStatus
 import jakarta.annotation.PostConstruct
 import org.springframework.core.io.ResourceLoader
 import org.springframework.stereotype.Service
+import java.awt.Color
 import java.awt.image.BufferedImage
-import java.io.File
 import javax.imageio.ImageIO
-
-
-
+import kotlin.math.abs
 
 @Service
-class FindProcessStatus(
-    val imageService: ImageService,
+class GameStatusService(
     val resourceLoader: ResourceLoader
 ) {
     var fishingStatusTemplateImage: BufferedImage? = null
     var catchingStatusTemplateImage: BufferedImage? = null
 
+    val compareGoodPercent = 90
+    val compareImageDelta = 20;
+
     fun getCurrentStatus(image: BufferedImage): GameStatus {
-        // if catch 'can left/right' status fishing
         if (isFishingStatus(image)) {
             return GameStatus.FINISHING
         }
@@ -29,10 +27,7 @@ class FindProcessStatus(
             return GameStatus.CATCH
         }
 
-        // if after 'click mouse' nothing -> throw
-
-        // nothing - nothing
-        return GameStatus.WAITING
+        return GameStatus.NOTHING
     }
 
     private fun isFishingStatus(image: BufferedImage): Boolean {
@@ -41,7 +36,7 @@ class FindProcessStatus(
         val width = 385 // ширина
         val height = 32 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return imageService.isTheSameImages(fishingStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(fishingStatusTemplateImage!!, croppedImage)
     }
 
     private fun isCatchingStatus(image: BufferedImage): Boolean {
@@ -50,7 +45,44 @@ class FindProcessStatus(
         val width = 130 // ширина
         val height = 25 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return imageService.isTheSameImages(catchingStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(catchingStatusTemplateImage!!, croppedImage)
+    }
+
+    private fun isTheSameImages(
+        image1: BufferedImage,
+        image2: BufferedImage
+    ): Boolean {
+        if (image1.width != image2.width || image1.height != image2.height) {
+            return false
+        }
+
+        var successCount = 0.0;
+        var unSuccessCount = 0.0;
+        for (y in 0 until image1.height) {
+            for (x in 0 until image1.width) {
+                val originalColor = Color(image1.getRGB(x, y))
+                val compareColor = Color(image2.getRGB(x, y))
+
+                if (isSameColor(originalColor, compareColor)) {
+                    successCount++
+                } else {
+                    unSuccessCount++
+                }
+            }
+        }
+
+        val comparePercent = (successCount / (successCount + unSuccessCount)) * 100
+
+        println(">>ComparePercent: $comparePercent%")
+
+        return comparePercent > compareGoodPercent
+    }
+
+    private fun isSameColor(originalColor: Color, compareColor: Color): Boolean {
+        return abs(originalColor.red - compareColor.red) < compareImageDelta ||
+                abs(originalColor.green - compareColor.green) < compareImageDelta ||
+                abs(originalColor.blue - compareColor.blue) < compareImageDelta
+
     }
 
     @PostConstruct

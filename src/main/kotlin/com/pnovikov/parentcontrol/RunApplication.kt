@@ -1,44 +1,39 @@
 package com.pnovikov.parentcontrol
 
-import com.pnovikov.parentcontrol.core.FishWayService
-import com.pnovikov.parentcontrol.core.Ways
-import com.pnovikov.parentcontrol.input.ScreenInput
-import com.pnovikov.parentcontrol.output.PushButtonService
-import com.pnovikov.parentcontrol.scanner.FindFishService
-import com.pnovikov.parentcontrol.scanner.FindProcessStatus
+import com.pnovikov.parentcontrol.service.fishing.FishWayService
+import com.pnovikov.parentcontrol.integration.input.ScreenInput
+import com.pnovikov.parentcontrol.integration.output.PushButtonService
+import com.pnovikov.parentcontrol.service.fishing.FindFishService
+import com.pnovikov.parentcontrol.service.fishing.FishWay
+import com.pnovikov.parentcontrol.service.game.GameStatus
+import com.pnovikov.parentcontrol.service.game.GameStatusService
+import com.pnovikov.parentcontrol.service.random.TimeRandomService
 import org.springframework.stereotype.Service
 import java.awt.Point
-import java.io.File
-import javax.sound.sampled.AudioInputStream
-import javax.sound.sampled.AudioSystem
-import javax.sound.sampled.Clip
 
 @Service
 class RunApplication(
-    val findProcessStatus: FindProcessStatus,
+    val findProcessStatus: GameStatusService,
     val screenInput: ScreenInput,
     val findFishService: FindFishService,
     val fishWayService: FishWayService,
-    val pushButtonService: PushButtonService
+    val pushButtonService: PushButtonService,
+    val randomService: TimeRandomService
 ) {
     @Volatile
     var running = true
 
     fun run() {
         var currentStatus: GameStatus
-        var way: Ways? = null
+        var way: FishWay? = null
         var lastPoint: Point? = null
 
         var isFishing = false
 
         while (running) {
-            Thread.sleep(2000)
+            Thread.sleep(randomService.randomTime(1500))
             val bufferedImage = screenInput.getScreen()
             currentStatus = findProcessStatus.getCurrentStatus(bufferedImage)
-
-            if (currentStatus == GameStatus.WAITING) {
-                // Ждемся
-            }
 
             if (currentStatus == GameStatus.CATCH) {
                 isFishing = false

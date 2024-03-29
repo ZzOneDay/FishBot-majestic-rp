@@ -1,4 +1,4 @@
-package com.pnovikov.parentcontrol.input
+package com.pnovikov.parentcontrol.integration.input
 
 import org.springframework.stereotype.Component
 import java.awt.Rectangle
