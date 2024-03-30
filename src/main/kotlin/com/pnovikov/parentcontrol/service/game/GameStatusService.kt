@@ -87,7 +87,7 @@ class GameStatusService(
 
         val comparePercent = (successCount / (successCount + unSuccessCount)) * 100
 
-        println(">>ComparePercent: $comparePercent%")
+        //println(">>ComparePercent: $comparePercent%")
 
         return comparePercent > compareGoodPercent
     }

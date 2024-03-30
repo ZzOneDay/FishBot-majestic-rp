@@ -122,7 +122,7 @@ class RunApplication(
             actions.add(cancelledLastAction(lastAction!!))
         }
         if (way == FishWay.RIGHT) {
-            println(">> PUSH 'A'")
+            //println(">> PUSH 'A'")
             val newAction = PushAction(
                 KeyType.KEYBOARD,
                 KeyEvent.VK_A,
@@ -133,7 +133,7 @@ class RunApplication(
         }
 
         if (way == FishWay.LEFT) {
-            println(">> PUSH 'D'")
+            //println(">> PUSH 'D'")
             val newAction = PushAction(
                 KeyType.KEYBOARD,
                 KeyEvent.VK_D,
