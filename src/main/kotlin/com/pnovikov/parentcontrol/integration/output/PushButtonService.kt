@@ -19,6 +19,45 @@ class PushButtonService(
     val randomService: TimeRandomService
 ) {
 
+    val lastAction: PushAction? = null
+
+    fun doAction(action: PushAction) {
+        if (action != lastAction) {
+            when (action.type) {
+                KeyType.MOUSE -> handleMouse(action);
+                KeyType.KEYBOARD -> handleKeyboard(action)
+            }
+        }
+    }
+
+    //InputEvent.BUTTON1_DOWN_MASK
+    fun handleMouse(action: PushAction) {
+        when (action.pushAction) {
+            Action.PUSH -> {
+                println(">>PUSH Mouse: ${action.keyCode}")
+                robot.mousePress(action.keyCode)
+            }
+
+            Action.UNPUSH -> {
+                println(">>UNPUSH Mouse: ${action.keyCode}")
+                robot.mouseRelease(action.keyCode)
+            }
+        }
+    }
+
+    fun handleKeyboard(action: PushAction) {
+        when(action.pushAction) {
+            Action.PUSH -> {
+                println(">>PUSH Keyboard: ${action.keyCode}")
+                robot.keyPress(action.keyCode)
+            }
+            Action.UNPUSH -> {
+                println(">>UNPUSH Keyboard: ${action.keyCode}")
+                robot.keyRelease(action.keyCode)
+            }
+        }
+    }
+
     fun push(way: FishWay) {
         if (way == FishWay.RIGHT) {
             println(">> PUSH 'A'")
