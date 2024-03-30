@@ -57,7 +57,7 @@ class RunApplication(
             currentStatus = findProcessStatus.getCurrentStatus(bufferedImage)
 
             // Рыбка сорвалась
-            if (currentStatus == GameStatus.BROKEN) {
+            if (currentStatus == GameStatus.BROKEN && lastAction != null) {
                 isFishing = false
                 isCatching = false
                 lastPoint = null
@@ -73,16 +73,7 @@ class RunApplication(
                 isFishing = false
                 isCatching = true
                 lastPoint = null
-
-                val cancelledLastAction = cancelledLastAction(lastAction!!)
-                val clickMouse = PushAction(
-                    KeyType.MOUSE,
-                    InputEvent.BUTTON1_DOWN_MASK,
-                    Action.PUSH
-                )
-                actionQueue.add(cancelledLastAction)
-                actionQueue.add(clickMouse)
-                lastAction = clickMouse
+                actionQueue.addAll(getActionOfCatch())
             }
 
             // Заканчиваем тянуть рыбу
@@ -118,32 +109,45 @@ class RunApplication(
 
     fun getActionOfWay(way: FishWay): List<PushAction> {
         val actions = arrayListOf<PushAction>()
-        if (lastAction != null) {
-            actions.add(cancelledLastAction(lastAction!!))
-        }
-        if (way == FishWay.RIGHT) {
-            //println(">> PUSH 'A'")
-            val newAction = PushAction(
+        val newAction = when(way) {
+            FishWay.RIGHT -> PushAction(
                 KeyType.KEYBOARD,
                 KeyEvent.VK_A,
                 Action.PUSH
             )
-            actions.add(newAction)
-            lastAction = newAction
-        }
-
-        if (way == FishWay.LEFT) {
-            //println(">> PUSH 'D'")
-            val newAction = PushAction(
+            FishWay.LEFT -> PushAction(
                 KeyType.KEYBOARD,
                 KeyEvent.VK_D,
                 Action.PUSH
             )
-            actions.add(newAction)
-            lastAction = newAction
         }
 
-        return actions
+        return if (lastAction != newAction) {
+            actions.add(cancelledLastAction(lastAction!!))
+            actions.add(newAction)
+            lastAction = newAction
+            actions
+        } else {
+            emptyList()
+        }
+    }
+
+    fun getActionOfCatch(): List<PushAction> {
+        val actions = arrayListOf<PushAction>()
+        val newAction = PushAction(
+            KeyType.MOUSE,
+            InputEvent.BUTTON1_DOWN_MASK,
+            Action.PUSH
+        )
+
+        return if (lastAction != newAction) {
+            actions.add(cancelledLastAction(lastAction!!))
+            actions.add(newAction)
+            lastAction = newAction
+            actions
+        } else {
+            emptyList()
+        }
     }
 
     fun cancelledLastAction(lastAction: PushAction): PushAction {
