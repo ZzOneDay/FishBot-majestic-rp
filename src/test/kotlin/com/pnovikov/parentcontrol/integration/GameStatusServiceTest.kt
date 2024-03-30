@@ -20,7 +20,6 @@ class GameStatusServiceTest() {
 
     @Test
     fun getFishingStatus() {
-        val waitingStatus = GameStatus.NOTHING
         val imageFile = resourceLoader.getResource("fish/hello38.png").file
         val image = ImageIO.read(imageFile)
         val status = findProcessStatus.getCurrentStatus(image)
@@ -29,10 +28,17 @@ class GameStatusServiceTest() {
 
     @Test
     fun getCatchingStatus() {
-        val waitingStatus = GameStatus.NOTHING
         val imageFile = resourceLoader.getResource("nofish/hello42.png").file
         val image = ImageIO.read(imageFile)
         val status = findProcessStatus.getCurrentStatus(image)
         assertEquals(GameStatus.CATCH, status)
+    }
+
+    @Test
+    fun getBrokenStatus() {
+        val imageFile = resourceLoader.getResource("nofish/hello0.png").file
+        val image = ImageIO.read(imageFile)
+        val status = findProcessStatus.getCurrentStatus(image)
+        assertEquals(GameStatus.BROKEN, status)
     }
 }

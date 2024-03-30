@@ -14,9 +14,10 @@ class GameStatusService(
 ) {
     var fishingStatusTemplateImage: BufferedImage? = null
     var catchingStatusTemplateImage: BufferedImage? = null
+    var brokenStatusTemplateImage: BufferedImage? = null
 
     val compareGoodPercent = 90
-    val compareImageDelta = 20;
+    val compareImageDelta = 20
 
     fun getCurrentStatus(image: BufferedImage): GameStatus {
         if (isFishingStatus(image)) {
@@ -25,6 +26,10 @@ class GameStatusService(
 
         if (isCatchingStatus(image)) {
             return GameStatus.CATCH
+        }
+
+        if (isBrokenStatus(image)) {
+            return GameStatus.BROKEN
         }
 
         return GameStatus.NOTHING
@@ -46,6 +51,15 @@ class GameStatusService(
         val height = 25 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
         return isTheSameImages(catchingStatusTemplateImage!!, croppedImage)
+    }
+
+    private fun isBrokenStatus(image: BufferedImage): Boolean {
+        val x = 22 // начальная точка X
+        val y = 22 // начальная точка Y
+        val width = 123 // ширина
+        val height = 28 // высота
+        val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
+        return isTheSameImages(brokenStatusTemplateImage!!, croppedImage)
     }
 
     private fun isTheSameImages(
@@ -93,6 +107,9 @@ class GameStatusService(
         )
         catchingStatusTemplateImage = ImageIO.read(
             resourceLoader.getResource("template/fishing_catch.png").file
+        )
+        brokenStatusTemplateImage = ImageIO.read(
+            resourceLoader.getResource("template/fishing_broken.png").file
         )
         println(">>Loading templates finished...")
     }
