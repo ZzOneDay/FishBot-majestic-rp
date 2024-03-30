@@ -77,7 +77,7 @@ class RunApplication(
             }
 
             // Заканчиваем тянуть рыбу
-            if (isCatching && currentStatus != GameStatus.CATCH) {
+            if (isCatching && currentStatus != GameStatus.CATCH && lastAction != null) {
                 isCatching = false
                 // it will be unpush mouse
                 val cancelledLastAction = cancelledLastAction(lastAction!!)
@@ -123,7 +123,9 @@ class RunApplication(
         }
 
         return if (lastAction != newAction) {
-            actions.add(cancelledLastAction(lastAction!!))
+            if (lastAction != null) {
+                actions.add(cancelledLastAction(lastAction!!))
+            }
             actions.add(newAction)
             lastAction = newAction
             actions
@@ -141,7 +143,9 @@ class RunApplication(
         )
 
         return if (lastAction != newAction) {
-            actions.add(cancelledLastAction(lastAction!!))
+            if (lastAction != null) {
+                actions.add(cancelledLastAction(lastAction!!))
+            }
             actions.add(newAction)
             lastAction = newAction
             actions
