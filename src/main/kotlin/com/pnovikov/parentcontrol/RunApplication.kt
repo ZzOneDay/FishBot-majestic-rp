@@ -72,6 +72,7 @@ class RunApplication(
                     )
                 )
                 lastAction = null
+                isAutoStart = false
             }
 
             if (currentStatus == GameStatus.STOP) {
