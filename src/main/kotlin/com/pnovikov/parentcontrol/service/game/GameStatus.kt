@@ -4,5 +4,6 @@ enum class GameStatus {
     NOTHING,
     FINISHING,
     CATCH,
-    BROKEN
+    BROKEN,
+    STOP
 }

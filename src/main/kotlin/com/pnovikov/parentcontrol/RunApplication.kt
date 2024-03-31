@@ -50,16 +50,46 @@ class RunApplication(
         var lastPoint: Point? = null
         var isFishing = false
         var isCatching = false
+        var isAutoStart = false
 
         while (running) {
             Thread.sleep(randomService.randomTime(1000))
             val bufferedImage = screenInput.getScreen()
             currentStatus = findProcessStatus.getCurrentStatus(bufferedImage)
 
+            if (currentStatus == GameStatus.NOTHING && isAutoStart) {
+                Thread.sleep(randomService.randomTime(2000))
+                actionQueue.add(PushAction(
+                    KeyType.KEYBOARD,
+                    KeyEvent.VK_E,
+                    Action.PUSH
+                ))
+                actionQueue.add(
+                    PushAction(
+                        KeyType.KEYBOARD,
+                        KeyEvent.VK_E,
+                        Action.UNPUSH
+                    )
+                )
+                lastAction = null
+            }
+
+            if (currentStatus == GameStatus.STOP) {
+                isFishing = false
+                isCatching = false
+                isAutoStart = false
+                if (lastPoint != null) {
+                    val cancelledLastAction = cancelledLastAction(lastAction!!)
+                    actionQueue.add(cancelledLastAction)
+                }
+                lastPoint = null
+            }
+
             // Рыбка сорвалась
             if (currentStatus == GameStatus.BROKEN && lastAction != null) {
                 isFishing = false
                 isCatching = false
+                isAutoStart = false
                 lastPoint = null
 
                 val cancelledLastAction = cancelledLastAction(lastAction!!)
@@ -83,6 +113,7 @@ class RunApplication(
                 val cancelledLastAction = cancelledLastAction(lastAction!!)
                 actionQueue.add(cancelledLastAction)
                 lastAction = null
+                isAutoStart = true
             }
 
             // Поиск рыбы, движения рыбы, нажимаем кнопки для ловли

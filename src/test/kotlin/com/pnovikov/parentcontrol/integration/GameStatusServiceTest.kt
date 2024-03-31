@@ -41,4 +41,12 @@ class GameStatusServiceTest() {
         val status = findProcessStatus.getCurrentStatus(image)
         assertEquals(GameStatus.BROKEN, status)
     }
+
+    @Test
+    fun getStopStatus() {
+        val imageFile = resourceLoader.getResource("nofish/helloKISA341.png").file
+        val image = ImageIO.read(imageFile)
+        val status = findProcessStatus.getCurrentStatus(image)
+        assertEquals(GameStatus.STOP, status)
+    }
 }
