@@ -16,20 +16,29 @@ class FindFishServiceTest {
 
     @Test
     fun testFishIsFound() {
+
+        var errors = ""
         for (imageFile in loadImageFromResources("fish")) {
             val image = ImageIO.read(imageFile)
             val point = findFishService.findFish(image)
-            assertNotNull(point)
+            if (point == null) {
+                errors += "Fish not found in file: ${imageFile.name}\n"
+            }
         }
+        assertTrue(errors == "", errors)
     }
 
     @Test
     fun testFishIsNotFound() {
+        var errors = ""
         for (imageFile in loadImageFromResources("nofish")) {
             val image = ImageIO.read(imageFile)
             val point = findFishService.findFish(image)
-            assertNull(point)
+            if (point != null) {
+                errors += "Fish is found in file: ${imageFile.name}\n"
+            }
         }
+        assertTrue(errors == "", errors)
     }
 
     fun loadImageFromResources(resourceFolder: String): List<File> {

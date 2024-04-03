@@ -53,7 +53,7 @@ class RunApplication(
         var isAutoStart = false
 
         while (running) {
-            Thread.sleep(randomService.randomTime(1000))
+            Thread.sleep(randomService.randomTime(500))
             val bufferedImage = screenInput.getScreen()
             currentStatus = findProcessStatus.getCurrentStatus(bufferedImage)
 
@@ -79,7 +79,7 @@ class RunApplication(
                 isFishing = false
                 isCatching = false
                 isAutoStart = false
-                if (lastPoint != null) {
+                if (lastAction != null) {
                     val cancelledLastAction = cancelledLastAction(lastAction!!)
                     actionQueue.add(cancelledLastAction)
                 }

@@ -18,7 +18,7 @@ class GameStatusService(
     var stopStatusTemplateImage: BufferedImage? = null
 
     val compareGoodPercent = 90
-    val compareImageDelta = 20
+    val compareImageDelta = 27
 
     fun getCurrentStatus(image: BufferedImage): GameStatus {
         if (isFishingStatus(image)) {
@@ -46,7 +46,7 @@ class GameStatusService(
         val width = 385 // ширина
         val height = 32 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return isTheSameImages(fishingStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(fishingStatusTemplateImage!!, croppedImage, "isFishingStatus")
     }
 
     private fun isCatchingStatus(image: BufferedImage): Boolean {
@@ -55,7 +55,7 @@ class GameStatusService(
         val width = 130 // ширина
         val height = 25 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return isTheSameImages(catchingStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(catchingStatusTemplateImage!!, croppedImage, "isCatchingStatus")
     }
 
     private fun isBrokenStatus(image: BufferedImage): Boolean {
@@ -64,7 +64,7 @@ class GameStatusService(
         val width = 123 // ширина
         val height = 28 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return isTheSameImages(brokenStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(brokenStatusTemplateImage!!, croppedImage, "isBrokenStatus")
     }
 
     private fun isStopStatus(image: BufferedImage): Boolean {
@@ -73,12 +73,13 @@ class GameStatusService(
         val width = 100 // ширина
         val height = 35 // высота
         val croppedImage: BufferedImage = image.getSubimage(x, y, width, height)
-        return isTheSameImages(stopStatusTemplateImage!!, croppedImage)
+        return isTheSameImages(stopStatusTemplateImage!!, croppedImage, "isStopStatus")
     }
 
     private fun isTheSameImages(
         image1: BufferedImage,
-        image2: BufferedImage
+        image2: BufferedImage,
+        name: String
     ): Boolean {
         if (image1.width != image2.width || image1.height != image2.height) {
             return false
@@ -101,7 +102,7 @@ class GameStatusService(
 
         val comparePercent = (successCount / (successCount + unSuccessCount)) * 100
 
-        //println(">>ComparePercent: $comparePercent%")
+        //println(" >> ComparePercent: $name >> $comparePercent%")
 
         return comparePercent > compareGoodPercent
     }

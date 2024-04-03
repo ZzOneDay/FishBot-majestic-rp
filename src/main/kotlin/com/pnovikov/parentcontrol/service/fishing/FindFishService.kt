@@ -29,7 +29,7 @@ class FindFishService(
 
         // Detecting hook on Mat image
         val hookDetections = MatOfRect()
-        fishHookDetection.detectMultiScale(sourceImage, hookDetections, 1.2, 3)
+        fishHookDetection.detectMultiScale(sourceImage, hookDetections, 1.20, 3)
 
 
         return hookDetections.toList().map { java.awt.Point(it.x, it.y) }.firstOrNull()

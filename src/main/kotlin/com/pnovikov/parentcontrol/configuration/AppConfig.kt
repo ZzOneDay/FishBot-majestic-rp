@@ -27,9 +27,10 @@ class AppConfig {
     @Bean
     fun fishHookDetection(resourceLoader: ResourceLoader): CascadeClassifier {
         val hookDetector = CascadeClassifier()
-        val templateImagePath = resourceLoader.getResource("template/cascade.xml").file.path
+        // template/cascade.xml was top
+        val templateImagePath = resourceLoader.getResource("template/cascade3.xml").file.path
             ?: throw IllegalArgumentException("Cascade is not found")
-        hookDetector.load(templateImagePath);
+        hookDetector.load(templateImagePath)
         return hookDetector
     }
 }
